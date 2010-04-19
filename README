@@ -1,15 +1,15 @@
 Dancer-Plugin-SiteMap
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+Plugin module for the Dancer web framwork that automagically adds sitemap
+routes to the webapp. Currently adds /sitemap and /sitemap.xml where the
+former is a basic HTML list and the latter is an XML document of URLS.
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
+Currently it only adds staticly defined routes for the GET method.
+
+Using the module is literally that simple... 'use' it and your app will
+have a site map.
+
+The HTML site map list can be styled throught the CSS class 'sitemap'
 
 
 INSTALLATION

@@ -1,7 +1,6 @@
 package Dancer::Plugin::SiteMap;
 
 use strict;
-use 5.0100;
 use Dancer qw(:syntax);
 use Dancer::Config qw(setting);
 use Dancer::Plugin;

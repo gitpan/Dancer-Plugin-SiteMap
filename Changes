@@ -1,5 +1,10 @@
 Revision history for Dancer-Plugin-SiteMap
 
-0.01    Date/time
+0.02    19/04/2010 19:15:00
+        Taken on board comments about being v5.0100 and removed the
+        version limitation. Ammended the change log, the README and added
+        META.yml
+
+0.01    18/04/2010 19:30:00
         First version, released on an unsuspecting world.
 
