@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Dancer-Plugin-SiteMap
-version:            0.04
+version:            0.05
 abstract:           Automated site map for the Dancer web framework.
 author:
     - James Ronan <james@ronanweb.co.uk>

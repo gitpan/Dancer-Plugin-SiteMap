@@ -2,7 +2,6 @@ package Dancer::Plugin::SiteMap;
 
 use strict;
 use Dancer qw(:syntax);
-use Dancer::Config qw(setting);
 use Dancer::Plugin;
 use XML::Simple;
 
@@ -12,25 +11,23 @@ Dancer::Plugin::SiteMap - Automated site map for the Dancer web framework.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 # add this plugin to Dancer
 register_plugin;
 
-
 # Add the routes for both the XML sitemap and the standalone one.
-Dancer::Route->add('get', '/sitemap.xml' => sub {
+get '/sitemap.xml' => sub {
     _xml_sitemap();
-});
+};
 
-Dancer::Route->add('get', '/sitemap' => sub {
+get '/sitemap' => sub {
     _html_sitemap();
-});
-
+};
 
 =head1 SYNOPSIS
 
@@ -58,8 +55,9 @@ The HTML site map list can be styled throught the CSS class 'sitemap'
 # URLs from _retreive_get_urls and outputs a basic HTML template to the
 # browser using the standard layout if one is defined.
 sub _html_sitemap {
-    my @urls  = _retreive_get_urls();
-    my $content = qq[ <h2> Site Map </h2>\n<ul class="sitemap">\n ];
+    my @urls          = _retreive_get_urls();
+    my $content       = qq[ <h2> Site Map </h2>\n<ul class="sitemap">\n ];
+    my $dancer_config = Dancer->config();
 
     for my $url (@urls) {
         $content .= qq[ <li><a href="$url">$url</a></li>\n ];
@@ -67,11 +65,11 @@ sub _html_sitemap {
     $content .= qq[ </ul>\n ];
 
     my $options ||= {layout => 1};
-    my $layout = setting('layout');
+    my $layout = $dancer_config->{layout};
     undef $layout unless $options->{layout};
 
     $layout .= '.tt' if $layout !~ /\.tt/;
-    $layout = path(setting('views'), 'layouts', $layout);
+    $layout = path($dancer_config->{views}, 'layouts', $layout);
 
     my $full_content =
         Dancer::Template->engine->render($layout, { content => $content });
@@ -111,13 +109,15 @@ sub _xml_sitemap {
 
 # Obtains the list of URLs from Dancers Route Registry.
 sub _retreive_get_urls {
-    my $routes     = Dancer::Route::Registry->routes;
-    my @get_routes = @{ $routes->{get} };
+    my $route;
     my @urls;
 
-    # push all the static routes into an array.
-    for my $route (@get_routes) {
-        push @urls, $route->{route} if ref($route->{route}) !~ m/HASH/;
+    foreach my $app ( Dancer::App->applications ) {
+        my $routes = $app->{registry}->{routes};
+        # push the static get routes into an array.
+        foreach ( @{ $routes->{get} } ) {
+            push (@urls, $_->{pattern}) if ref($_->{pattern}) !~ m/HASH/i;
+        }
     }
 
     return sort(@urls);
