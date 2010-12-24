@@ -11,14 +11,21 @@ Dancer::Plugin::SiteMap - Automated site map for the Dancer web framework.
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =cut
 
-our $VERSION = '0.05';
+our $VERSION     = '0.06';
+my  $OMIT_ROUTES = []; 
 
-# add this plugin to Dancer
+# Add syntactic sugar for omitting routes.
+register 'sitemap_ignore' => sub {
+    $Dancer::Plugin::SiteMap::OMIT_ROUTES = \@_;
+};
+
+# Add this plugin to Dancer
 register_plugin;
+
 
 # Add the routes for both the XML sitemap and the standalone one.
 get '/sitemap.xml' => sub {
@@ -34,7 +41,9 @@ get '/sitemap' => sub {
     use Dancer;
     use Dancer::Plugin::SiteMap;
 
-Yup, its that simple.
+Yup, its that simple. Optionally you can omit routes:
+    
+    sitemap_ignore ('ignore/this/route', 'orthese/.*');
 
 =head1 DESCRIPTION
 
@@ -48,6 +57,16 @@ Using the module is literally that simple... 'use' it and your app will
 have a site map.
 
 The HTML site map list can be styled throught the CSS class 'sitemap'
+
+Added additional functionality in 0.06 as follows: 
+
+Firstly, fixed the route selector so the sitemap doesn't show the "or not" 
+operator ('?'), any route defined with a ':variable' in the path or a pure 
+regexp as thats just dirty.
+
+More importantly, I came across the requirement to not have a few admin pages
+listed in the sitemap, so I've added the ability to tell the plugin to ignore
+certain routes via the sitemap_ignore keyword.
 
 =cut
 
@@ -68,7 +87,7 @@ sub _html_sitemap {
     my $layout = $dancer_config->{layout};
     undef $layout unless $options->{layout};
 
-    $layout .= '.tt' if $layout !~ /\.tt/;
+    $layout .= '.tt' if $layout !~ /\.tt$/;
     $layout = path($dancer_config->{views}, 'layouts', $layout);
 
     my $full_content =
@@ -106,17 +125,31 @@ sub _xml_sitemap {
 };
 
 
-
 # Obtains the list of URLs from Dancers Route Registry.
 sub _retreive_get_urls {
-    my $route;
-    my @urls;
+    my ($route, @urls);
 
-    foreach my $app ( Dancer::App->applications ) {
+    for my $app ( Dancer::App->applications ) {
         my $routes = $app->{registry}->{routes};
+        
         # push the static get routes into an array.
-        foreach ( @{ $routes->{get} } ) {
-            push (@urls, $_->{pattern}) if ref($_->{pattern}) !~ m/HASH/i;
+        get_route:
+        for my $get_route ( @{ $routes->{get} } ) {
+            if (ref($get_route->{pattern}) !~ m/HASH/i) {
+                
+                # If the pattern is a true comprehensive regexp or the route
+                # has a :variable element to it, then omit it.
+                next get_route if ($get_route->{pattern} =~ m/[()[\]|]|:\w/);
+              
+                # If there is a wildcard modifier, then drop it and have the 
+                # full route.
+                $get_route->{pattern} =~ s/\?//g;
+
+                # Other than that, its cool to be added.
+                push (@urls, $get_route->{pattern}) 
+                    if ! grep { $get_route->{pattern} =~ m/$_/i } 
+                              @$Dancer::Plugin::SiteMap::OMIT_ROUTES; 
+            }
         }
     }
 
