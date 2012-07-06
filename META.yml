@@ -21,4 +21,4 @@ requires:
   Dancer: 1.175
   Test::More: 0
   XML::Simple: 0
-version: 0.08
+version: 0.10
