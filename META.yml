@@ -1,24 +1,24 @@
---- #YAML:1.0
-name:               Dancer-Plugin-SiteMap
-version:            0.12
-abstract:           Automated site map for the Dancer web framework.
+---
+abstract: 'Automated site map for the Dancer web framework.'
 author:
-    - James Ronan <james@ronanweb.co.uk>
-license:            perl
-distribution_type:  module
-configure_requires:
-    ExtUtils::MakeMaker:  0
+  - 'James Ronan <james@ronanweb.co.uk>'
 build_requires:
-    ExtUtils::MakeMaker:  0
-requires:
-    Dancer:       1.175
-    Test::More:   0
-    XML::Simple:  0
-no_index:
-    directory:
-        - t
-        - inc
-generated_by:       ExtUtils::MakeMaker version 6.57_05
+  ExtUtils::MakeMaker: 0
+configure_requires:
+  ExtUtils::MakeMaker: 0
+dynamic_config: 1
+generated_by: 'ExtUtils::MakeMaker version 6.9, CPAN::Meta::Converter version 2.131560'
+license: perl
 meta-spec:
-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
-    version:  1.4
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Dancer-Plugin-SiteMap
+no_index:
+  directory:
+    - t
+    - inc
+requires:
+  Dancer: 1.175
+  Test::More: 0
+  XML::Simple: 0
+version: 0.13
