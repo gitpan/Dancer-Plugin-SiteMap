@@ -39,5 +39,13 @@
       }
    },
    "release_status" : "stable",
-   "version" : "0.13"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/jamesronan/Dancer-Plugin-SiteMap/issues"
+      },
+      "repository" : {
+         "url" : "https://github.com/jamesronan/Dancer-Plugin-SiteMap"
+      }
+   },
+   "version" : "0.14"
 }

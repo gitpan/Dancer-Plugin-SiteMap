@@ -21,4 +21,7 @@ requires:
   Dancer: 1.175
   Test::More: 0
   XML::Simple: 0
-version: 0.13
+resources:
+  bugtracker: https://github.com/jamesronan/Dancer-Plugin-SiteMap/issues
+  repository: https://github.com/jamesronan/Dancer-Plugin-SiteMap
+version: 0.14
